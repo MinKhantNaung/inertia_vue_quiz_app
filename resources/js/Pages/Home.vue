@@ -2,5 +2,5 @@
 </script>
 
 <template>
-    <h1>Hello Laravel, inertia, vue</h1>
+    <h1 class="bg-success text-info">Hello Laravel, inertia, vue</h1>
 </template>
