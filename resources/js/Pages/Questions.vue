@@ -83,10 +83,22 @@ const submitQuestion = () => {
 
 const showViewQuestionModal = ref(false)
 const selectedQuestion = ref(null)
+const selectedEditAnswers = ref(null)
 
 const viewQuestionModal = (index) => {
     showViewQuestionModal.value = true;
     selectedQuestion.value = props.questions[index];
+    selectedEditAnswers.value = props.questions[index].answers;
+}
+
+const handleRadioEdit = (answerId) => {
+    selectedEditAnswers.value.forEach((answer) => {
+        if(answer.id === answerId) {
+            answer.is_correct = 1
+        } else {
+            answer.is_correct = 0
+        }
+    })
 }
 
 const closeModal = () => {
@@ -198,15 +210,15 @@ const closeViewModal = () => {
                         <div class="col-sm-4">
                             <h6>Correct?</h6>
                         </div>
-                        <div v-for="(answer, index) in selectedQuestion.answers" :key="index" class="row">
+                        <div v-for="(answer, index) in selectedEditAnswers" :key="index" class="row">
                             <div class="col-sm-8 mb-1">
                                 <div class="row">
-                                    <span class="col-1">{{ answer.id }}</span>
+                                    <span class="col-1">{{ index + 1 }}</span>
                                     <input type="text" v-model="answer.name" class="form-control col">
                                 </div>
                             </div>
                             <div class="col-sm-4 d-flex align-items-center mb-1">
-                                <input type="radio" class="ms-2 form-check-input">
+                                <input type="radio" :checked="answer.is_correct === 1" :value="answer.id" @change="handleRadioEdit(answer.id)" class="ms-2 form-check-input">
                             </div>
                         </div>
                     </div>
