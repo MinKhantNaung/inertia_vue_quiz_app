@@ -11,6 +11,10 @@ let answerId = 1;
 const selectedAnswer = ref(null)
 const toastr = useToastr();
 
+const props = defineProps({
+    questions: Object,
+})
+
 const form = useForm({
     questionName: '',
     answers: [],
@@ -77,6 +81,14 @@ const submitQuestion = () => {
     });
 }
 
+const showViewQuestionModal = ref(false)
+const selectedQuestion = ref(null)
+
+const viewQuestionModal = (index) => {
+    showViewQuestionModal.value = true;
+    selectedQuestion.value = props.questions[index];
+}
+
 const closeModal = () => {
     showNewQuestionModal.value = false;
     answerId = 1;
@@ -84,6 +96,9 @@ const closeModal = () => {
     form.clearErrors();
 }
 
+const closeViewModal = () => {
+    showViewQuestionModal.value = false;
+}
 </script>
 
 <template>
@@ -105,10 +120,15 @@ const closeModal = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                        <tr v-for="(question, index) in props.questions" :key="question.id">
+                            <td>{{ index + 1 }}</td>
+                            <td>{{ question.name }}</td>
+                            <td>
+                                <button type="button" @click.prevent="viewQuestionModal(index)"
+                                    class="btn btn-outline-primary ms-1 fw-bolder">View</button>
+                                <button type="button" class="btn btn-outline-secondary ms-1 fw-bolder">Edit</button>
+                                <button type="button" class="btn btn-outline-danger ms-1 fw-bolder">Delete</button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -162,6 +182,38 @@ const closeModal = () => {
                     <button type="button" @click.prevent="closeModal" class="btn btn-sm btn-danger">Cancel</button>
                     <button type="button" @click.prevent="submitQuestion" v-if="form.answers.length"
                         class="btn btn-sm btn-success ms-1">Submit</button>
+                </template>
+            </NewQuestionModal>
+
+            <NewQuestionModal :show="showViewQuestionModal" @close="showViewQuestionModal = false">
+                <template #header>
+                    <h5 class="text-info">View Question/Answers</h5>
+                </template>
+                <template #body>
+                    <h6 class="fw-bold">Q. {{ selectedQuestion.name }}</h6>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <h6># Answers</h6>
+                        </div>
+                        <div class="col-sm-4">
+                            <h6>Correct?</h6>
+                        </div>
+                        <div v-for="(answer, index) in selectedQuestion.answers" :key="index" class="row">
+                            <div class="col-sm-8 mb-1">
+                                <div class="row">
+                                    <span class="col-1">{{ answer.id }}</span>
+                                    <input type="text" v-model="answer.name" class="form-control col">
+                                </div>
+                            </div>
+                            <div class="col-sm-4 d-flex align-items-center mb-1">
+                                <input type="radio" class="ms-2 form-check-input">
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template #footer>
+                    <button type="button" @click.prevent="closeViewModal" class="btn btn-sm btn-danger">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-success ms-1">Submit</button>
                 </template>
             </NewQuestionModal>
         </Teleport>
