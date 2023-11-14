@@ -14,7 +14,7 @@ class AnswerController extends Controller
 
     public function create()
     {
-        //
+
     }
 
     public function store(Request $request)
@@ -34,7 +34,20 @@ class AnswerController extends Controller
 
     public function update(Request $request, Answer $answer)
     {
-        //
+        return $answer;
+    }
+
+    public function updateAnswers(Request $request) {
+        foreach($request->all() as $answer) {
+            $updated_answer = Answer::findOrFail($answer['id']);
+            $updated_answer->update([
+                'name' => $answer['name'],
+                'question_id' => $answer['question_id'],
+                'is_correct' => $answer['is_correct']
+            ]);
+        }
+
+        return back();
     }
 
     public function destroy(Answer $answer)

@@ -2,7 +2,7 @@
 import Layout from '../Shared/Layout.vue';
 import NewQuestionModal from '@/Shared/NewQuestionModal.vue'
 import { ref } from 'vue';
-import { useForm, usePage } from '@inertiajs/vue3';
+import { router, useForm, usePage } from '@inertiajs/vue3';
 import Swal from 'sweetalert2'
 import { useToastr } from '../toastr.js'
 
@@ -13,6 +13,7 @@ const toastr = useToastr();
 
 const props = defineProps({
     questions: Object,
+    errors: Array,
 })
 
 const form = useForm({
@@ -93,12 +94,48 @@ const viewQuestionModal = (index) => {
 
 const handleRadioEdit = (answerId) => {
     selectedEditAnswers.value.forEach((answer) => {
-        if(answer.id === answerId) {
+        if (answer.id === answerId) {
             answer.is_correct = 1
         } else {
             answer.is_correct = 0
         }
     })
+}
+
+// save updated answers to database
+const updateAnswers = () => {
+    router.post(`/answers/update`, selectedEditAnswers.value, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+        onSuccess: () => {
+            closeViewModal();
+            toastr['success']('Answer updated successfully !')
+        }
+    })
+}
+
+const deleteQuestion = (questionId) => {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Delete"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(`/questions/${questionId}`, {}, {
+                preserveScroll: true,
+                preserveState: true,
+                replace: true,
+                onSuccess: () => {
+                    toastr['success']('Answer deleted successfully !')
+                }
+            })
+        }
+    });
 }
 
 const closeModal = () => {
@@ -139,7 +176,8 @@ const closeViewModal = () => {
                                 <button type="button" @click.prevent="viewQuestionModal(index)"
                                     class="btn btn-outline-primary ms-1 fw-bolder">View</button>
                                 <button type="button" class="btn btn-outline-secondary ms-1 fw-bolder">Edit</button>
-                                <button type="button" class="btn btn-outline-danger ms-1 fw-bolder">Delete</button>
+                                <button type="button" @click.prevent="deleteQuestion(question.id)"
+                                    class="btn btn-outline-danger ms-1 fw-bolder">Delete</button>
                             </td>
                         </tr>
                     </tbody>
@@ -218,14 +256,15 @@ const closeViewModal = () => {
                                 </div>
                             </div>
                             <div class="col-sm-4 d-flex align-items-center mb-1">
-                                <input type="radio" :checked="answer.is_correct === 1" :value="answer.id" @change="handleRadioEdit(answer.id)" class="ms-2 form-check-input">
+                                <input type="radio" :checked="answer.is_correct === 1" :value="answer.id"
+                                    @change="handleRadioEdit(answer.id)" class="ms-2 form-check-input">
                             </div>
                         </div>
                     </div>
                 </template>
                 <template #footer>
                     <button type="button" @click.prevent="closeViewModal" class="btn btn-sm btn-danger">Cancel</button>
-                    <button type="button" class="btn btn-sm btn-success ms-1">Submit</button>
+                    <button type="button" @click.prevent="updateAnswers" class="btn btn-sm btn-success ms-1">Submit</button>
                 </template>
             </NewQuestionModal>
         </Teleport>

@@ -15,7 +15,7 @@ import { Link } from '@inertiajs/vue3'
 
                     <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
                         <li>
-                            <Link href="/" class="nav-link text-white">
+                            <Link href="/" class="nav-link text-white active">
                                 <svg class="bi d-block mx-auto mb-1" width="24" height="24">
                                     <use xlink:href="#home" />
                                 </svg>
@@ -23,7 +23,7 @@ import { Link } from '@inertiajs/vue3'
                             </Link>
                         </li>
                         <li>
-                            <Link href="/quizes" class="nav-link text-white">
+                            <Link href="/quizes" class="nav-link text-white active">
                                 <svg class="bi d-block mx-auto mb-1" width="24" height="24">
                                     <use xlink:href="#speedometer2" />
                                 </svg>
@@ -31,7 +31,7 @@ import { Link } from '@inertiajs/vue3'
                             </Link>
                         </li>
                         <li>
-                            <Link href="/questions" class="nav-link text-white">
+                            <Link href="/questions" class="nav-link text-white active">
                                 <svg class="bi d-block mx-auto mb-1" width="24" height="24">
                                     <use xlink:href="#table" />
                                 </svg>
