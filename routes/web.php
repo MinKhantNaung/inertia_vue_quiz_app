@@ -26,3 +26,8 @@ Route::resource('/answers', AnswerController::class);
 Route::resource('/quizes', QuizController::class);
 Route::post('/answers/update', [AnswerController::class, 'updateAnswers']);
 Route::get('/show-quizes', [QuizController::class, 'showAllQuizes']);
+Route::post('/results', [QuizController::class, 'showResult']);
+// for return home page when enter not exist route
+Route::fallback(function() {
+    return Inertia::render('Home');
+});

@@ -51,4 +51,21 @@ class QuizController extends Controller
             'questions' => $questions
         ]);
     }
+
+    public function showResult(Request $request) {
+        $correct_percentage = ($request->score / $request->totalQuestions) * 100;
+
+        $comment = match(true) {
+            $correct_percentage >= 80 && $correct_percentage <= 100 => 'Congratulation !',
+            $correct_percentage >= 60 && $correct_percentage <= 79 => 'Impressive !',
+            $correct_percentage >= 40 && $correct_percentage <= 59 => 'Almost there !',
+            $correct_percentage < 40 => 'Ah Oh !',
+            default => 'Well, Why did you reach here?'
+        };
+
+        return Inertia::render('Result', [
+            'correctPercentage' => $correct_percentage,
+            'comment' => $comment
+        ]);
+    }
 }
